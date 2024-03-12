@@ -5,10 +5,10 @@
 # Make sure to set desired version and User (i.e. tomcat)
 
 # Tomcat version to install
-TOMCAT_VERSION="9.0.85"
+TOMCAT_VERSION="<Desired Version>"
 
 # Set Tomcat user (MODIFY TO TOMCAT BEFORE RUNNING ON SYSTEM)
-TOMCAT=tomtest
+TOMCAT=tomcat
 
 # Set the installation/resources directories
 INSTALL_DIR="/u01/app/tomcat-$TOMCAT_VERSION"
