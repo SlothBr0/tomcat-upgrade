@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # FILES directory should be created before beginning. Identify where this will be (typically /u01/app/IS-OPS)
+# Requires Tomcat.service file to point to symlink specified
 # Make sure the following are loaded into the directory, all necessary .jar files for /lib, all necessary .xml files for /conf
 # Make sure to set desired version and User (i.e. tomcat)
 
@@ -14,6 +15,7 @@ TOMCAT=<Desired User>
 INSTALL_DIR="/u01/app/tomcat-$TOMCAT_VERSION"
 FILES="/u01/app/IS-OPS/"
 APP_DIR="/u01/app"
+BANNER_CONFIG=<Location of Banner Configuration Groovy>
 
 if [ -d "$INSTALL_DIR" ]; then
 	echo "Tomcat Version is Current. Exiting."
@@ -45,7 +47,7 @@ SETENV="$INSTALL_DIR/bin/setenv.sh"
 echo 'JAVA_HOME="/usr/lib/jvm/jre-1.8.0"; export JAVA_HOME' > $SETENV
 echo 'CATALINA_HOME="'$APP_DIR'/tomcat-'$TOMCAT_VERSION'"; export CATALINA_HOME' >> $SETENV
 echo 'JAVA_OPTS="-Djava.awt.headless=true '-Duser.timezone=America/Phoenix'"; export JAVA_OPTS' >> $SETENV
-echo 'CATALINA_OPTS="-Xms2048m -Xmx6g -XX:MaxPermSize=2048m -Doracle.jdbc.autoCommitSpecCompliant=false -DBANNER_APP_CONFIG=/banapp/pccp/ban9war/shared_configuration/banner_configuration.groovy -Djava.security.egd=file:/dev/../dev/urandom -server -XX:+UseParallelGC -Dbanner.logging.dir=/u01/app/logs"; export CATALINA_OPTS' >> $SETENV
+echo 'CATALINA_OPTS="-Xms2048m -Xmx6g -XX:MaxPermSize=2048m -Doracle.jdbc.autoCommitSpecCompliant=false -DBANNER_APP_CONFIG='$BANNER_CONFIG' -Djava.security.egd=file:/dev/../dev/urandom -server -XX:+UseParallelGC -Dbanner.logging.dir=/u01/app/logs"; export CATALINA_OPTS' >> $SETENV
 echo 'CATALINA_PID="${CATALINA_HOME}/pid"; export CATALINA_PID' >> $SETENV
 
 # Set permissions on directory
@@ -58,13 +60,15 @@ find "$INSTALL_DIR/bin" -type f -name "*.sh" -exec chmod g+x {} \;
 find "$INSTALL_DIR/lib" -type f -name "*" -exec chmod 644 {} \;
 
 # Stop tomcat
-#systemctl stop tomcat
+systemctl stop tomcat
 
 # Create symbolic link
 cd $APP_DIR
 unlink tomcat
 ln -s "$INSTALL_DIR" tomcat
 
+# Start Tomcat
+systemctl start tomcat
 echo "Tomcat has finished upgrading. Please start Tomcat using systemd"
 
 fi
