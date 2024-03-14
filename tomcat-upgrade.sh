@@ -6,10 +6,10 @@
 # Make sure to set desired version and User (i.e. tomcat)
 
 # Tomcat version to install
-TOMCAT_VERSION=<Desired Version>
+TOMCAT_VERSION=9.0.85
 
 # Set Tomcat user (MODIFY TO TOMCAT BEFORE RUNNING ON SYSTEM)
-TOMCAT=<Desired User>
+TOMCAT=tomcat
 
 # Set the installation/resources directories
 INSTALL_DIR="/u01/app/tomcat-$TOMCAT_VERSION"
@@ -60,7 +60,7 @@ find "$INSTALL_DIR/bin" -type f -name "*.sh" -exec chmod g+x {} \;
 find "$INSTALL_DIR/lib" -type f -name "*" -exec chmod 644 {} \;
 
 # Stop tomcat
-systemctl stop tomcat
+#systemctl stop tomcat
 
 # Create symbolic link
 cd $APP_DIR
@@ -68,7 +68,7 @@ unlink tomcat
 ln -s "$INSTALL_DIR" tomcat
 
 # Start Tomcat
-systemctl start tomcat
+#systemctl start tomcat
 echo "Tomcat has finished upgrading. Please start Tomcat using systemd"
 
 fi
