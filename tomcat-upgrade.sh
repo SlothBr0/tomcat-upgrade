@@ -15,7 +15,8 @@ TOMCAT=tomcat
 INSTALL_DIR="/u01/app/tomcat-$TOMCAT_VERSION"
 FILES="/u01/app/IS-OPS/"
 APP_DIR="/u01/app"
-BANNER_CONFIG=<Location of Banner Configuration Groovy>
+BANNER_CONFIG="/u01/app/IS-OPS/banner_configuration.groovy"
+SERVICE_FILE="/etc/systemd/system/tomcat.service"
 
 if [ -d "$INSTALL_DIR" ]; then
 	echo "Tomcat Version is Current. Exiting."
@@ -59,8 +60,39 @@ chown -R $TOMCAT "$INSTALL_DIR"/webapps/ "$INSTALL_DIR"/work/ "$INSTALL_DIR"/tem
 find "$INSTALL_DIR/bin" -type f -name "*.sh" -exec chmod g+x {} \;
 find "$INSTALL_DIR/lib" -type f -name "*" -exec chmod 644 {} \;
 
+# Check for tomcat.service file
+if [ -e "$SERVICE_FILE" ]; then
+        echo "Service File exists at: $SERVICE_FILE"
+else
+        echo "File does not exist at: $SERVICE_FILE. Creating Service File."
+fi
+
+# Write Service File
+cat > "$SERVICE_FILE" << EOF
+[Unit]
+Description=Tomcat Server (tomcat)
+After=network.target
+
+[Service]
+Type=simple
+
+WorkingDirectory=/u01/app/tomcat/bin
+ExecStart=/u01/app/tomcat/bin/catalina.sh run
+
+ExecStopPost=/bin/rm -rf /u01/app/tomcat/temp/*
+
+User=tomcat
+Group=tomcat
+UMask=0007
+RestartSec=10
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
 # Stop tomcat
-#systemctl stop tomcat
+systemctl stop tomcat
 
 # Create symbolic link
 cd $APP_DIR
@@ -68,7 +100,7 @@ unlink tomcat
 ln -s "$INSTALL_DIR" tomcat
 
 # Start Tomcat
-#systemctl start tomcat
+systemctl start tomcat
 echo "Tomcat has finished upgrading. Please start Tomcat using systemd"
 
 fi
