@@ -15,7 +15,7 @@ TOMCAT=tomcat
 INSTALL_DIR="/u01/app/tomcat-$TOMCAT_VERSION"
 FILES="/u01/app/IS-OPS/"
 APP_DIR="/u01/app"
-BANNER_CONFIG="/u01/app/IS-OPS/banner_configuration.groovy"
+BANNER_CONFIG="/u01/app/banner_configuration.groovy"
 SERVICE_FILE="/etc/systemd/system/tomcat.service"
 
 if [ -d "$INSTALL_DIR" ]; then
@@ -57,15 +57,13 @@ chgrp -R $TOMCAT "$INSTALL_DIR"
 chmod -R g+r "$INSTALL_DIR/conf"
 chmod g+x "$INSTALL_DIR/conf"
 chown -R $TOMCAT "$INSTALL_DIR"/webapps/ "$INSTALL_DIR"/work/ "$INSTALL_DIR"/temp/ "$INSTALL_DIR"/logs/
+chown $TOMCAT "$INSTALL_DIR"/conf/
 find "$INSTALL_DIR/bin" -type f -name "*.sh" -exec chmod g+x {} \;
 find "$INSTALL_DIR/lib" -type f -name "*" -exec chmod 644 {} \;
 
 # Check for tomcat.service file
 if [ -e "$SERVICE_FILE" ]; then
-        echo "Service File exists at: $SERVICE_FILE"
-else
-        echo "File does not exist at: $SERVICE_FILE. Creating Service File."
-fi
+        echo "Service File does not exist at: $SERVICE_FILE. Creating Service File."
 
 # Write Service File
 cat > "$SERVICE_FILE" << EOF
@@ -90,6 +88,13 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 EOF
+
+# Reload systemctl daemon
+systemctl daemon-reload
+
+else
+        echo "Service file exists at: $SERVICE_FILE."
+fi
 
 # Stop tomcat
 systemctl stop tomcat
