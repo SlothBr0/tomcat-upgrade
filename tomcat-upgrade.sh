@@ -6,7 +6,7 @@
 # Make sure to set desired version and User (i.e. tomcat)
 
 # Tomcat version to install
-TOMCAT_VERSION=9.0.85
+TOMCAT_VERSION=9.0.86
 
 # Set Tomcat user (MODIFY TO TOMCAT BEFORE RUNNING ON SYSTEM)
 TOMCAT=tomcat
