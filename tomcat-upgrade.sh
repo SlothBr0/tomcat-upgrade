@@ -34,7 +34,6 @@ mv $APP_DIR/apache-tomcat-$TOMCAT_VERSION $INSTALL_DIR
 
 # Copy Files
 echo "Copying Files..."
-cp $APP_DIR/tomcat/bin/setenv.sh $INSTALL_DIR/bin/
 cp $FILES/*.jar $INSTALL_DIR/lib
 cp -f $FILES/*.xml $INSTALL_DIR/conf
 cp $APP_DIR/tomcat/webapps/*.war $INSTALL_DIR/webapps/
@@ -48,6 +47,7 @@ if [ ! -e "$APP_DIR/tomcat/bin/setenv.sh" ]; then
 else
        echo "setenv exists; modifying..."
        OLD_TOMCAT_VER=$(sed -n 's/^CATALINA_HOME=".*\/tomcat-\([0-9.]*\)".*$/\1/p' $APP_DIR/tomcat/bin/setenv.sh)
+       cp $APP_DIR/tomcat/bin/setenv.sh $INSTALL_DIR/bin/
 # Modify setenv.sh
        sed -i s/$OLD_TOMCAT_VER/$TOMCAT_VERSION/g $SETENV_PATH
 fi
