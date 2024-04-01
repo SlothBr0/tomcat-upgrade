@@ -15,9 +15,11 @@ TOMCAT=tomcat
 INSTALL_DIR="/u01/app/tomcat-$TOMCAT_VERSION"
 FILES="/u01/app/IS-OPS/"
 APP_DIR="/u01/app"
-BANNER_CONFIG="/u01/app/banner_configuration.groovy"
+SETENV_PATH="$INSTALL_DIR/bin/setenv.sh"
 SERVICE_FILE="/etc/systemd/system/tomcat.service"
+OLD_TOMCAT_VER=$(sed -n 's/^CATALINA_HOME=".*\/tomcat-\([0-9.]*\)".*$/\1/p' $APP_DIR/tomcat/bin/setenv.sh)
 
+# Check if Tomcat Version is already current
 if [ -d "$INSTALL_DIR" ]; then
 	echo "Tomcat Version is Current. Exiting."
 	exit 0
@@ -31,38 +33,31 @@ echo "Extracting Tomcat Archive..."
 tar xf $APP_DIR/apache-tomcat-$TOMCAT_VERSION.tar.gz -C $APP_DIR 
 mv $APP_DIR/apache-tomcat-$TOMCAT_VERSION $INSTALL_DIR
 
-# Copy lib files
+# Copy Files
 echo "Copying Files..."
+cp $APP_DIR/tomcat/bin/setenv.sh $INSTALL_DIR/bin/
 cp $FILES/*.jar $INSTALL_DIR/lib
-
-# Copy conf files
 cp -f $FILES/*.xml $INSTALL_DIR/conf
-
-# Copy war files
 cp $APP_DIR/tomcat/webapps/*.war $INSTALL_DIR/webapps/
 
 # Remove uneeded files
 rm -rf $INSTALL_DIR/webapps/docs $INSTALL_DIR/webapps/examples $INSTALL_DIR/webapps/ROOT $INSTALL_DIR/webapps/host-manager $INSTALL_DIR/webapps/manager 
 
-SETENV="$INSTALL_DIR/bin/setenv.sh"
-echo 'JAVA_HOME="/usr/lib/jvm/jre-1.8.0"; export JAVA_HOME' > $SETENV
-echo 'CATALINA_HOME="'$APP_DIR'/tomcat-'$TOMCAT_VERSION'"; export CATALINA_HOME' >> $SETENV
-echo 'JAVA_OPTS="-Djava.awt.headless=true '-Duser.timezone=America/Phoenix'"; export JAVA_OPTS' >> $SETENV
-echo 'CATALINA_OPTS="-Xms2048m -Xmx6g -XX:MaxPermSize=2048m -Doracle.jdbc.autoCommitSpecCompliant=false -DBANNER_APP_CONFIG='$BANNER_CONFIG' -Djava.security.egd=file:/dev/../dev/urandom -server -XX:+UseParallelGC -Dbanner.logging.dir=/u01/app/logs"; export CATALINA_OPTS' >> $SETENV
-echo 'CATALINA_PID="${CATALINA_HOME}/pid"; export CATALINA_PID' >> $SETENV
+# Modify setenv.sh
+sed -i s/$OLD_TOMCAT_VER/$TOMCAT_VERSION/g $SETENV_PATH
 
 # Set permissions on directory
 echo "Setting permissions..."
 chgrp -R $TOMCAT "$INSTALL_DIR"
 chmod -R g+r "$INSTALL_DIR/conf"
 chmod g+x "$INSTALL_DIR/conf"
-chown -R $TOMCAT "$INSTALL_DIR"/webapps/ "$INSTALL_DIR"/work/ "$INSTALL_DIR"/temp/ "$INSTALL_DIR"/logs/
+chown -R $TOMCAT "$INSTALL_DIR"/webapps/ "$INSTALL_DIR"/work/ "$INSTALL_DIR"/temp/ "$INSTALL_DIR"/logs/ "$INSTALL_DIR"/bin
 chown $TOMCAT "$INSTALL_DIR"/conf/
 find "$INSTALL_DIR/bin" -type f -name "*.sh" -exec chmod g+x {} \;
 find "$INSTALL_DIR/lib" -type f -name "*" -exec chmod 644 {} \;
 
 # Check for tomcat.service file
-if [ -e "$SERVICE_FILE" ]; then
+if [ ! -e "$SERVICE_FILE" ]; then
         echo "Service File does not exist at: $SERVICE_FILE. Creating Service File."
 
 # Write Service File
@@ -106,6 +101,6 @@ ln -s "$INSTALL_DIR" tomcat
 
 # Start Tomcat
 systemctl start tomcat
-echo "Tomcat has finished upgrading. Please start Tomcat using systemd"
+echo "Tomcat has finished upgrading. Please start or check status of Tomcat using systemd"
 
 fi
