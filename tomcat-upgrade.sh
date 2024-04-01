@@ -17,7 +17,6 @@ FILES="/u01/app/IS-OPS/"
 APP_DIR="/u01/app"
 SETENV_PATH="$INSTALL_DIR/bin/setenv.sh"
 SERVICE_FILE="/etc/systemd/system/tomcat.service"
-OLD_TOMCAT_VER=$(sed -n 's/^CATALINA_HOME=".*\/tomcat-\([0-9.]*\)".*$/\1/p' $APP_DIR/tomcat/bin/setenv.sh)
 
 # Check if Tomcat Version is already current
 if [ -d "$INSTALL_DIR" ]; then
@@ -43,8 +42,15 @@ cp $APP_DIR/tomcat/webapps/*.war $INSTALL_DIR/webapps/
 # Remove uneeded files
 rm -rf $INSTALL_DIR/webapps/docs $INSTALL_DIR/webapps/examples $INSTALL_DIR/webapps/ROOT $INSTALL_DIR/webapps/host-manager $INSTALL_DIR/webapps/manager 
 
+# Check for setenv
+if [ ! -e "$APP_DIR/tomcat/bin/setenv.sh" ]; then
+       echo "setenv does not exist."
+else
+       echo "setenv exists; modifying..."
+       OLD_TOMCAT_VER=$(sed -n 's/^CATALINA_HOME=".*\/tomcat-\([0-9.]*\)".*$/\1/p' $APP_DIR/tomcat/bin/setenv.sh)
 # Modify setenv.sh
-sed -i s/$OLD_TOMCAT_VER/$TOMCAT_VERSION/g $SETENV_PATH
+       sed -i s/$OLD_TOMCAT_VER/$TOMCAT_VERSION/g $SETENV_PATH
+fi
 
 # Set permissions on directory
 echo "Setting permissions..."
