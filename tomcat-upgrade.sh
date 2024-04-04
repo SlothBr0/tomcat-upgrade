@@ -112,4 +112,6 @@ ln -s "$INSTALL_DIR" tomcat
 systemctl start tomcat
 echo "Tomcat has finished upgrading. Please start or check status of Tomcat using systemd"
 
+rm -rf $APP_DIR/apache-tomcat-$TOMCAT_VERSION.tar.gz
+
 fi
