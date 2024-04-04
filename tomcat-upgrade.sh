@@ -6,7 +6,13 @@
 # Make sure to set desired version and User (i.e. tomcat)
 
 # Tomcat version to install
-TOMCAT_VERSION=9.0.86
+TargetVer=9
+
+# To select latest Target Version
+TOMCAT_VERSION=`curl --silent https://dlcdn.apache.org/tomcat/tomcat-${TargetVer}/|grep -oP "(?<=\"v)${TargetVer}(?:\.\d+){2}\b"|sort -V|tail -n 1`
+
+# If a specific version is desired Comment out TOMCAT_VERSION above and uncomment TOMCAT_VERSION below
+#TOMCAT_VERSION=9.0.86
 
 # Set Tomcat user (MODIFY TO TOMCAT BEFORE RUNNING ON BANNER SYSTEM)
 TOMCAT=tomcat
@@ -26,7 +32,7 @@ else
 
 # Download and extract Tomcat
 echo "Downloading Apache Tomcat $TOMCAT_VERSION..."
-wget -q "https://dlcdn.apache.org/tomcat/tomcat-9/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz" -O $APP_DIR/apache-tomcat-$TOMCAT_VERSION.tar.gz wait 
+wget -q "https://dlcdn.apache.org/tomcat/tomcat-${TOMCAT_VERSION%.*.*}/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz" -O $APP_DIR/apache-tomcat-$TOMCAT_VERSION.tar.gz wait 
 
 echo "Extracting Tomcat Archive..."
 tar xf $APP_DIR/apache-tomcat-$TOMCAT_VERSION.tar.gz -C $APP_DIR 
