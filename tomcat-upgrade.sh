@@ -8,6 +8,9 @@
 # Tomcat version to install
 TOMCAT_VERSION=9.0.86
 
+# Update URL for new versions
+SATELLITE_URL="https://satellite6-prod.pima.edu/pulp/content/Pima_Community_College/Library/custom/Tomcat-9_0_86/Tomcat-9_0_86/apache-tomcat-9.0.86.tar.gz"
+
 # Set Tomcat user (MODIFY TO TOMCAT BEFORE RUNNING ON BANNER SYSTEM)
 TOMCAT=tomcat
 
@@ -26,7 +29,7 @@ else
 
 # Download and extract Tomcat
 echo "Downloading Apache Tomcat $TOMCAT_VERSION..."
-wget -q "https://dlcdn.apache.org/tomcat/tomcat-9/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz" -O $APP_DIR/apache-tomcat-$TOMCAT_VERSION.tar.gz wait 
+wget -q --no-check-certificate "$SATELLITE_URL" -O $APP_DIR/apache-tomcat-$TOMCAT_VERSION.tar.gz wait 
 
 echo "Extracting Tomcat Archive..."
 tar xf $APP_DIR/apache-tomcat-$TOMCAT_VERSION.tar.gz -C $APP_DIR 
