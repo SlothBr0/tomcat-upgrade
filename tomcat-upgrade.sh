@@ -6,13 +6,10 @@
 # Make sure to set desired version and User (i.e. tomcat)
 
 # Tomcat version to install
-TargetVer=9
+TOMCAT_VERSION=9.0.100
 
-# To select latest Target Version
-TOMCAT_VERSION=`curl --silent https://dlcdn.apache.org/tomcat/tomcat-${TargetVer}/|grep -oP "(?<=\"v)${TargetVer}(?:\.\d+){2}\b"|sort -V|tail -n 1`
-
-# If a specific version is desired Comment out TOMCAT_VERSION above and uncomment TOMCAT_VERSION below
-#TOMCAT_VERSION=9.0.86
+# Update URL for new versions
+SATELLITE_URL="https://satellite6-prod.pima.edu/pulp/content/Pima_Community_College/Library/custom/Tomcat/Tomcat-9/apache-tomcat-$TOMCAT_VERSION.tar.gz"
 
 # Set Tomcat user (MODIFY TO TOMCAT BEFORE RUNNING ON BANNER SYSTEM)
 TOMCAT=tomcat
@@ -32,7 +29,7 @@ else
 
 # Download and extract Tomcat
 echo "Downloading Apache Tomcat $TOMCAT_VERSION..."
-wget -q "https://dlcdn.apache.org/tomcat/tomcat-${TOMCAT_VERSION%.*.*}/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz" -O $APP_DIR/apache-tomcat-$TOMCAT_VERSION.tar.gz wait 
+wget -q --no-check-certificate "$SATELLITE_URL" -O $APP_DIR/apache-tomcat-$TOMCAT_VERSION.tar.gz wait 
 
 echo "Extracting Tomcat Archive..."
 tar xf $APP_DIR/apache-tomcat-$TOMCAT_VERSION.tar.gz -C $APP_DIR 
@@ -114,5 +111,7 @@ ln -s "$INSTALL_DIR" tomcat
 # Start Tomcat
 systemctl start tomcat
 echo "Tomcat has finished upgrading. Please start or check status of Tomcat using systemd"
+
+rm -rf $APP_DIR/apache-tomcat-$TOMCAT_VERSION.tar.gz
 
 fi
