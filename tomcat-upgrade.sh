@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#test
+
 # FILES directory should be created before beginning. Identify where this will be (typically /u01/app/IS-OPS)
 # Requires Tomcat.service file to point to symlink specified
 # Make sure the following are loaded into the directory, all necessary .jar files for /lib, all necessary .xml files for /conf
