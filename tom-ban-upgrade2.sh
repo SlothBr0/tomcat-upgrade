@@ -16,7 +16,7 @@ TOMCAT=tomcat
 
 # Set the installation/resources directories
 INSTALL_DIR="/u01/app/tomcat-$TOMCAT_VERSION"
-FILES="/u01/app/IS-OPS/"
+FILES="/u01/app/IS-OPS/v10/"
 APP_DIR="/u01/app"
 SETENV_PATH="$INSTALL_DIR/bin/setenv.sh"
 SERVICE_FILE="/etc/systemd/system/tomcat2.service"
