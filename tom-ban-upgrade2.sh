@@ -39,7 +39,7 @@ mv $APP_DIR/apache-tomcat-$TOMCAT_VERSION $INSTALL_DIR
 echo "Copying Files..."
 cp $FILES/*.jar $INSTALL_DIR/lib
 cp -f $FILES/*.xml $INSTALL_DIR/conf
-cp $APP_DIR/tomcat/webapps/*.war $INSTALL_DIR/webapps/
+cp $APP_DIR/tomcat2/webapps/*.war $INSTALL_DIR/webapps/
 
 # Remove uneeded files
 rm -rf $INSTALL_DIR/webapps/docs $INSTALL_DIR/webapps/examples $INSTALL_DIR/webapps/ROOT $INSTALL_DIR/webapps/host-manager $INSTALL_DIR/webapps/manager 
