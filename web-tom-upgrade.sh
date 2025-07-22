@@ -39,9 +39,10 @@ mv $APP_DIR/apache-tomcat-$TOMCAT_VERSION $INSTALL_DIR
 echo "Copying Files..."
 cp $FILES/*.jar $INSTALL_DIR/lib
 cp -f $FILES/server.xml $INSTALL_DIR/conf
+mkdir $INSTALL_DIR/conf/Catalina/localhost
 cp $FILES/secure.xml $INSTALL_DIR/conf/Catalina/localhost
 cp $FILES/*.jks $INSTALL_DIR/conf
-cp -r $FILES/tomcat/webapps/secure $INSTALL_DIR/webapps/
+cp -r $APP_DIR/tomcat/webapps/secure $INSTALL_DIR/webapps/
 
 # Remove uneeded files
 rm -rf $INSTALL_DIR/webapps/docs $INSTALL_DIR/webapps/examples $INSTALL_DIR/webapps/ROOT $INSTALL_DIR/webapps/host-manager $INSTALL_DIR/webapps/manager 
