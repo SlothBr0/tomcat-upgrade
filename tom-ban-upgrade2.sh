@@ -6,7 +6,7 @@
 # Make sure to set desired version and User (i.e. tomcat)
 
 # Tomcat version to install
-TOMCAT_VERSION=10.1.43
+TOMCAT_VERSION=10.1.44
 
 # Update URL for new versions
 SATELLITE_URL="https://satellite6-prod.pima.edu/pulp/content/Pima_Community_College/Library/custom/Tomcat/Tomcat-10/apache-tomcat-$TOMCAT_VERSION.tar.gz"
@@ -101,7 +101,7 @@ else
 fi
 
 # Stop tomcat
-systemctl stop tomcat
+systemctl stop tomcat2
 
 # Create symbolic link
 cd $APP_DIR
