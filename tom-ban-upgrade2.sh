@@ -6,7 +6,7 @@
 # Make sure to set desired version and User (i.e. tomcat)
 
 # Tomcat version to install
-TOMCAT_VERSION=10.1.57
+TOMCAT_VERSION=10.1.60
 
 # Update URL for new versions
 SATELLITE_URL="https://satellite6-prod.pima.edu/pulp/content/Pima_Community_College/Library/custom/Tomcat/Tomcat-10/apache-tomcat-$TOMCAT_VERSION.tar.gz"
@@ -19,7 +19,7 @@ INSTALL_DIR="/u01/app/tomcat-$TOMCAT_VERSION"
 FILES="/u01/app/IS-OPS/v10/"
 APP_DIR="/u01/app"
 SETENV_PATH="$INSTALL_DIR/bin/setenv.sh"
-SERVICE_FILE="/etc/systemd/system/tomcat2.service"
+SERVICE_FILE="/etc/systemd/system/tomcat10.service"
 
 # Check if Tomcat Version is already current
 if [ -d "$INSTALL_DIR" ]; then
@@ -39,13 +39,13 @@ mv $APP_DIR/apache-tomcat-$TOMCAT_VERSION $INSTALL_DIR
 echo "Copying Files..."
 cp $FILES/*.jar $INSTALL_DIR/lib
 cp -f $FILES/*.xml $INSTALL_DIR/conf
-cp $APP_DIR/tomcat2/webapps/*.war $INSTALL_DIR/webapps/
+cp $APP_DIR/tomcat10/webapps/*.war $INSTALL_DIR/webapps/
 
 # Remove uneeded files
 rm -rf $INSTALL_DIR/webapps/docs $INSTALL_DIR/webapps/examples $INSTALL_DIR/webapps/ROOT $INSTALL_DIR/webapps/host-manager $INSTALL_DIR/webapps/manager 
 
 # Check for setenv
-if [ ! -e "$APP_DIR/tomcat2/bin/setenv.sh" ]; then
+if [ ! -e "$APP_DIR/tomcat10/bin/setenv.sh" ]; then
        echo "setenv does not exist."
 else
        echo "setenv exists; modifying..."
@@ -78,10 +78,10 @@ After=network.target
 [Service]
 Type=simple
 
-WorkingDirectory=/u01/app/tomcat2/bin
-ExecStart=/u01/app/tomcat2/bin/catalina.sh run
+WorkingDirectory=/u01/app/tomcat10/bin
+ExecStart=/u01/app/tomcat10/bin/catalina.sh run
 
-ExecStopPost=/bin/rm -rf /u01/app/tomcat2/temp/*
+ExecStopPost=/bin/rm -rf /u01/app/tomcat10/temp/*
 
 User=tomcat
 Group=tomcat
@@ -101,15 +101,15 @@ else
 fi
 
 # Stop tomcat
-systemctl stop tomcat2
+systemctl stop tomcat10
 
 # Create symbolic link
 cd $APP_DIR
-unlink tomcat2
-ln -s "$INSTALL_DIR" tomcat2
+unlink tomcat10
+ln -s "$INSTALL_DIR" tomcat10
 
 # Start Tomcat
-systemctl start tomcat2
+systemctl start tomcat10
 echo "Tomcat has finished upgrading. Please start or check status of Tomcat using systemd"
 
 rm -rf $APP_DIR/apache-tomcat-$TOMCAT_VERSION.tar.gz
